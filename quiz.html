@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Квиз знаний — NetSentinel | #КиберПраво</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+--primary:#6366f1;--primary-dark:#4f46e5;--primary-light:#a5b4fc;
+--primary-glow:rgba(99,102,241,.35);--secondary:#06b6d4;
+--danger:#ef4444;--danger-light:#fee2e2;
+--success:#22c55e;--success-light:#dcfce7;
+--bg-dark:#0f172a;
+--text-dark:#1e293b;--text-muted:#64748b;
+--card:#fff;--section-alt:#f8fafc;--border:#e2e8f0;
+--r:16px;--r-sm:10px;
+--shadow-lg:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.08);
+--tr:all .3s cubic-bezier(.4,0,.2,1);
+--font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--font);color:var(--text-dark);line-height:1.65;background:var(--section-alt);overflow-x:hidden}
+a{color:var(--primary);text-decoration:none}
+h1,h2,h3{line-height:1.25;font-weight:700}
+.container{max-width:1140px;margin:0 auto;padding:0 20px}
+.page-transition{position:fixed;inset:0;background:var(--bg-dark);z-index:9999;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s ease}
+.page-transition.active{opacity:1;pointer-events:all}
+.page-transition .loader{width:40px;height:40px;border:3px solid rgba(255,255,255,.15);border-top-color:var(--secondary);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.nav{position:fixed;top:0;left:0;width:100%;z-index:1000;padding:14px 0;background:rgba(15,23,42,.92);backdrop-filter:blur(16px);box-shadow:0 2px 20px rgba(0,0,0,.2)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-size:1.3rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px}
+.nav-logo span{background:linear-gradient(135deg,var(--primary-light),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;gap:6px;list-style:none}
+.nav-links a{color:rgba(255,255,255,.8);font-size:.85rem;font-weight:500;transition:var(--tr);padding:8px 16px;border-radius:var(--r-sm)}
+.nav-links a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.nav-links a.active{color:#fff;background:rgba(99,102,241,.3)}
+.burger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+.burger span{width:24px;height:2px;background:#fff;border-radius:2px}
+.mobile-menu{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,.97);z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:30px;backdrop-filter:blur(20px)}
+.mobile-menu.open{display:flex}
+.mobile-menu a{color:#fff;font-size:1.3rem;font-weight:600}
+.mobile-close{position:absolute;top:20px;right:24px;background:none;border:none;color:#fff;font-size:2rem;cursor:pointer}
+.page-header{padding:100px 0 40px;text-align:center}
+.page-header h1{font-size:clamp(1.8rem,4vw,2.4rem);margin-bottom:10px}
+.page-header p{color:var(--text-muted);font-size:1.05rem;max-width:550px;margin:0 auto}
+.page-header .badge{display:inline-flex;align-items:center;gap:6px;background:var(--primary);color:#fff;padding:5px 14px;border-radius:50px;font-size:.78rem;font-weight:600;margin-bottom:14px;letter-spacing:.5px;text-transform:uppercase}
+@keyframes msgIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.quiz-card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow-lg);max-width:700px;margin:0 auto 60px;overflow:hidden}
+.quiz-header{background:linear-gradient(135deg,var(--primary),var(--primary-dark));padding:20px 28px;display:flex;align-items:center;justify-content:space-between}
+.quiz-header .q-num{color:#fff;font-weight:700;font-size:1rem}
+.quiz-header .q-score{color:var(--primary-light);font-size:.9rem}
+.quiz-progress{height:4px;background:rgba(0,0,0,.1)}
+.quiz-progress-bar{height:100%;background:var(--secondary);transition:width .4s ease}
+.quiz-body{padding:32px 28px}
+.quiz-question{font-size:1.15rem;font-weight:600;margin-bottom:24px;line-height:1.5}
+.quiz-options{display:flex;flex-direction:column;gap:12px}
+.quiz-option{padding:16px 20px;border:2px solid var(--border);border-radius:var(--r-sm);cursor:pointer;transition:var(--tr);font-size:.95rem;display:flex;align-items:flex-start;gap:12px;line-height:1.5}
+.quiz-option:hover:not(.disabled){border-color:var(--primary);background:rgba(99,102,241,.04)}
+.quiz-option .letter{width:28px;height:28px;border-radius:50%;background:var(--section-alt);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;transition:var(--tr)}
+.quiz-option:hover:not(.disabled) .letter{background:var(--primary);color:#fff}
+.quiz-option.correct{border-color:var(--success);background:var(--success-light)}
+.quiz-option.correct .letter{background:var(--success);color:#fff}
+.quiz-option.wrong{border-color:var(--danger);background:var(--danger-light)}
+.quiz-option.wrong .letter{background:var(--danger);color:#fff}
+.quiz-option.disabled{cursor:default;opacity:.7}
+.quiz-explanation{margin-top:20px;padding:16px 20px;background:var(--section-alt);border-radius:var(--r-sm);border-left:4px solid var(--primary);font-size:.9rem;color:var(--text-muted);line-height:1.7;animation:msgIn .3s ease}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:var(--r-sm);font-size:1rem;font-weight:600;cursor:pointer;transition:var(--tr);border:none;font-family:var(--font)}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 4px 14px var(--primary-glow)}
+.btn-primary:hover{background:var(--primary-dark);transform:translateY(-2px)}
+.quiz-next{margin-top:24px;width:100%}
+.quiz-result{text-align:center;padding:40px 28px}
+.quiz-result .big-icon{font-size:4.5rem;margin-bottom:16px;display:block}
+.quiz-result h3{font-size:1.6rem;margin-bottom:6px}
+.quiz-result .rank{font-size:1.1rem;color:var(--primary);font-weight:600;margin-bottom:20px}
+.quiz-result .score-circle{width:130px;height:130px;border-radius:50%;margin:20px auto;display:flex;align-items:center;justify-content:center;flex-direction:column;border:6px solid var(--primary-light)}
+.quiz-result .score-circle .val{font-size:2.2rem;font-weight:800;color:var(--primary)}
+.quiz-result .score-circle .of{font-size:.8rem;color:var(--text-muted)}
+.quiz-result p.advice{color:var(--text-muted);font-size:.95rem;max-width:500px;margin:20px auto 24px;line-height:1.7}
+.footer{background:var(--bg-dark);color:rgba(255,255,255,.6);padding:50px 0 30px;text-align:center}
+.footer-hash{font-size:2rem;font-weight:800;background:linear-gradient(135deg,var(--primary-light),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:16px;display:block}
+.footer p{font-size:.88rem;margin-bottom:6px}
+.footer .copy{margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,.08);font-size:.8rem;color:rgba(255,255,255,.35)}
+@media(max-width:768px){.nav-links{display:none}.burger{display:flex}.quiz-body{padding:22px 18px}.quiz-question{font-size:1rem}.page-header h1{font-size:1.6rem}}
+</style>
+</head>
+<body>
+<div class="page-transition" id="pageTransition"><div class="loader"></div></div>
+<nav class="nav"><div class="container nav-inner">
+<a href="index.html" class="nav-logo" onclick="return smoothNav(event,'index.html')">🛡️ <span>NetSentinel</span></a>
+<ul class="nav-links">
+<li><a href="index.html" onclick="return smoothNav(event,'index.html')">Главная</a></li>
+<li><a href="trainer.html" onclick="return smoothNav(event,'trainer.html')">Тренажёр</a></li>
+<li><a href="quiz.html" class="active" onclick="return smoothNav(event,'quiz.html')">Квиз</a></li>
+<li><a href="law.html" onclick="return smoothNav(event,'law.html')">Закон</a></li>
+<li><a href="phonecheck.html" onclick="return smoothNav(event,'phonecheck.html')">Проверка номера</a></li>
+</ul>
+<button class="burger" id="burgerBtn" aria-label="Меню"><span></span><span></span><span></span></button>
+</div></nav>
+<div class="mobile-menu" id="mobileMenu"><button class="mobile-close" id="mobileClose">✕</button>
+<a href="index.html" onclick="return smoothNav(event,'index.html')">🏠 Главная</a>
+<a href="trainer.html" onclick="return smoothNav(event,'trainer.html')">🎯 Тренажёр</a>
+<a href="quiz.html" onclick="return smoothNav(event,'quiz.html')">🧠 Квиз</a>
+<a href="law.html" onclick="return smoothNav(event,'law.html')">⚖️ Закон</a>
+<a href="phonecheck.html" onclick="return smoothNav(event,'phonecheck.html')">📞 Проверка номера</a>
+</div>
+<div class="page-header"><span class="badge">🧠 Квиз</span><h1>Проверь свои знания</h1><p>12 вопросов о кибербезопасности. Получи свой кибер-ранг!</p></div>
+<div class="container" style="padding-bottom:60px">
+<div class="quiz-card" id="quizCard">
+<div class="quiz-header"><span class="q-num" id="qNum">Вопрос 1 / 12</span><span class="q-score" id="qScore">Баллы: 0</span></div>
+<div class="quiz-progress"><div class="quiz-progress-bar" id="quizProgress"></div></div>
+<div class="quiz-body" id="quizBody"></div>
+</div>
+</div>
+<footer class="footer"><div class="container"><span class="footer-hash">#КиберПраво</span><p>NetSentinel — интерактивный тренажёр</p><div class="copy">© 2025 Все права защищены</div></div></footer>
+<script>
+function smoothNav(e,url){e.preventDefault();document.getElementById('mobileMenu').classList.remove('open');document.getElementById('pageTransition').classList.add('active');setTimeout(()=>{window.location.href=url},400);return false}
+document.getElementById('burgerBtn').addEventListener('click',()=>document.getElementById('mobileMenu').classList.add('open'));
+document.getElementById('mobileClose').addEventListener('click',()=>document.getElementById('mobileMenu').classList.remove('open'));
+window.addEventListener('load',()=>document.getElementById('pageTransition').classList.remove('active'));
+
+const quizData=[
+{q:"Что такое фишинг?",opts:["Рыбная ловля через интернет","Кибератака для кражи данных через поддельные сервисы","Антивирусная программа","Метод шифрования"],correct:1,explain:"Фишинг — вид кибератаки, когда мошенники создают поддельные сайты или рассылают ложные сообщения для кражи данных."},
+{q:"Какой URL подозрительный?",opts:["https://www.belarusbank.by/login","https://beIarusbank-secure.tk/login","https://my.a1.by/account","https://www.instagram.com/settings"],correct:1,explain:"Домен beIarusbank-secure.tk поддельный! Буква «I» заменяет «l», домен .tk используется мошенниками."},
+{q:"Что такое дипфейк?",opts:["Очистка компьютера","Фальшивый профиль","Поддельное видео/аудио созданное ИИ","Режим камеры"],correct:2,explain:"Дипфейк — технология ИИ для подделки видео и аудио. Нейросеть может клонировать голос за 3 секунды."},
+{q:"Звонят из «банка» и просят код из СМС. Что делать?",opts:["Назвать код","Назвать последние 3 цифры","Положить трубку и перезвонить в банк сам","Попросить перезвонить"],correct:2,explain:"Банк НИКОГДА не просит коды из СМС. Положи трубку и позвони в банк по номеру с карты."},
+{q:"Какой пароль надёжный?",opts:["123456789","qwerty2024","K!b3r_Sh1eld#2025","мой_пароль"],correct:2,explain:"Надёжный пароль: 12+ символов, буквы, цифры, спецсимволы. Для каждого сервиса — свой."},
+{q:"Что такое 2FA?",opts:["Двойной пароль","Вход по отпечатку","Дополнительное подтверждение через SMS/приложение","Смена пароля каждые 2 дня"],correct:2,explain:"2FA — подтверждение входа через второй канал. Даже если пароль украли — без второго фактора не войти."},
+{q:"Статья УК РБ за несанкционированный доступ к компьютерной информации?",opts:["Ст. 209","Ст. 349","Ст. 101","Ст. 500"],correct:1,explain:"Ст. 349 УК РБ — до 7 лет лишения свободы. Ответственность с 16 лет."},
+{q:"Что такое социальная инженерия?",opts:["Проектирование соцсетей","Программирование в школе","Психологические манипуляции для получения данных","Инженерное образование"],correct:2,explain:"Социальная инженерия — манипуляция людьми через страх, срочность и доверие."},
+{q:"Куда обращаться при кибермошенничестве в Беларуси?",opts:["Написать в соцсетях","В милицию (102) или управление «К» МВД","Ничего не делать","Позвонить мошенникам"],correct:1,explain:"Звони 102 или обращайся в управление «К» МВД Республики Беларусь."},
+{q:"Как ИИ используется мошенниками?",opts:["Только для вирусов","ИИ не используется для мошенничества","Дипфейки, клонирование голоса, фишинговые письма","Только для взлома паролей"],correct:2,explain:"ИИ создаёт дипфейки, клонирует голоса, генерирует фишинговые тексты и автоматизирует атаки."},
+{q:"Статья УК РБ за хищение с использованием компьютерной техники?",opts:["Ст. 349","Ст. 351","Ст. 212","Ст. 350"],correct:2,explain:"Ст. 212 УК РБ — до 12 лет лишения свободы. Ответственность с 14 лет!"},
+{q:"Что квалифицируется по ст. 352 УК РБ?",opts:["Установка антивируса","Копирование чужих файлов и перехват переписки без согласия","Публикация своих фото","Обновление ПО"],correct:1,explain:"Ст. 352 — неправомерное завладение компьютерной информацией. До 2 лет (до 6 при тяжких последствиях)."}
+];
+
+let qI=0,qS=0;
+const qB=document.getElementById('quizBody'),qN=document.getElementById('qNum'),qSE=document.getElementById('qScore'),qP=document.getElementById('quizProgress');
+
+function renderQ(){
+if(qI>=quizData.length){renderQR();return}
+const q=quizData[qI];qN.textContent=`Вопрос ${qI+1} / ${quizData.length}`;qSE.textContent=`Баллы: ${qS}`;
+qP.style.width=`${(qI/quizData.length)*100}%`;
+const l=['А','Б','В','Г'];
+qB.innerHTML=`<div class="quiz-question">${q.q}</div><div class="quiz-options">${q.opts.map((o,i)=>`<div class="quiz-option" onclick="checkQ(${i})"><span class="letter">${l[i]}</span><span>${o}</span></div>`).join('')}</div>`;
+}
+
+function checkQ(s){
+const q=quizData[qI],c=s===q.correct;if(c)qS++;qSE.textContent=`Баллы: ${qS}`;
+document.querySelectorAll('.quiz-option').forEach((o,i)=>{o.classList.add('disabled');o.onclick=null;if(i===q.correct)o.classList.add('correct');if(i===s&&!c)o.classList.add('wrong')});
+const e=document.createElement('div');e.className='quiz-explanation';e.innerHTML=`💡 ${q.explain}`;qB.appendChild(e);
+const b=document.createElement('button');b.className='btn btn-primary quiz-next';b.textContent=qI<quizData.length-1?'Следующий вопрос →':'Результаты →';b.onclick=()=>{qI++;renderQ()};qB.appendChild(b);
+}
+
+function renderQR(){
+qP.style.width='100%';qN.textContent='Готово!';
+const p=Math.round((qS/quizData.length)*100);
+let r,e,a;
+if(p>=90){r='КиберГерой';e='🏆';a='Ты эксперт! Делись знаниями с друзьями.'}
+else if(p>=70){r='Кибер-Эксперт';e='⭐';a='Отлично! Повтори ошибки.'}
+else if(p>=50){r='Кибер-Защитник';e='🛡️';a='Неплохо! Изучи материалы глубже.'}
+else{r='Кибер-Новичок';e='🔰';a='Пройди все разделы сайта — это важно!'}
+qB.innerHTML=`<div class="quiz-result"><span class="big-icon">${e}</span><h3>Твой кибер-ранг:</h3><div class="rank">${r}</div><div class="score-circle"><span class="val">${qS}</span><span class="of">из ${quizData.length}</span></div><p class="advice">${a}</p><button class="btn btn-primary" onclick="qI=0;qS=0;renderQ()">🔄 Пройти заново</button></div>`;
+}
+renderQ();
+</script>
+</body>
+</html>

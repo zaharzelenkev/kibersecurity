@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Законы и советы — NetSentinel | #КиберПраво</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+--primary:#6366f1;--primary-dark:#4f46e5;--primary-light:#a5b4fc;
+--secondary:#06b6d4;--danger:#ef4444;--danger-light:#fee2e2;
+--bg-dark:#0f172a;
+--text-dark:#1e293b;--text-muted:#64748b;
+--card:#fff;--section-alt:#f8fafc;--border:#e2e8f0;
+--r:16px;--r-sm:10px;
+--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+--shadow-md:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.08);
+--shadow-lg:0 10px 15px -3px rgba(0,0,0,.1);
+--tr:all .3s cubic-bezier(.4,0,.2,1);
+--font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--font);color:var(--text-dark);line-height:1.65;background:var(--section-alt);overflow-x:hidden}
+a{color:var(--primary);text-decoration:none}
+h1,h2,h3,h4{line-height:1.25;font-weight:700}
+.container{max-width:1140px;margin:0 auto;padding:0 20px}
+.page-transition{position:fixed;inset:0;background:var(--bg-dark);z-index:9999;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s ease}
+.page-transition.active{opacity:1;pointer-events:all}
+.page-transition .loader{width:40px;height:40px;border:3px solid rgba(255,255,255,.15);border-top-color:var(--secondary);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.nav{position:fixed;top:0;left:0;width:100%;z-index:1000;padding:14px 0;background:rgba(15,23,42,.92);backdrop-filter:blur(16px);box-shadow:0 2px 20px rgba(0,0,0,.2)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-size:1.3rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px}
+.nav-logo span{background:linear-gradient(135deg,var(--primary-light),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;gap:6px;list-style:none}
+.nav-links a{color:rgba(255,255,255,.8);font-size:.85rem;font-weight:500;transition:var(--tr);padding:8px 16px;border-radius:var(--r-sm)}
+.nav-links a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.nav-links a.active{color:#fff;background:rgba(99,102,241,.3)}
+.burger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+.burger span{width:24px;height:2px;background:#fff;border-radius:2px}
+.mobile-menu{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,.97);z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:30px;backdrop-filter:blur(20px)}
+.mobile-menu.open{display:flex}
+.mobile-menu a{color:#fff;font-size:1.3rem;font-weight:600}
+.mobile-close{position:absolute;top:20px;right:24px;background:none;border:none;color:#fff;font-size:2rem;cursor:pointer}
+.page-header{padding:100px 0 40px;text-align:center}
+.page-header h1{font-size:clamp(1.8rem,4vw,2.4rem);margin-bottom:10px}
+.page-header p{color:var(--text-muted);font-size:1.05rem;max-width:600px;margin:0 auto}
+.page-header .badge{display:inline-flex;align-items:center;gap:6px;background:var(--primary);color:#fff;padding:5px 14px;border-radius:50px;font-size:.78rem;font-weight:600;margin-bottom:14px;letter-spacing:.5px;text-transform:uppercase}
+.section{padding:0 0 70px}
+.section-header{text-align:center;max-width:650px;margin:0 auto 40px}
+.section-header h2{font-size:clamp(1.6rem,3.5vw,2rem);margin-bottom:10px}
+.section-header p{color:var(--text-muted);font-size:1rem}
+.section-header .badge{display:inline-flex;align-items:center;gap:6px;background:var(--primary);color:#fff;padding:5px 14px;border-radius:50px;font-size:.78rem;font-weight:600;margin-bottom:14px;letter-spacing:.5px;text-transform:uppercase}
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.law-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.law-card{background:var(--card);border-radius:var(--r);padding:28px;box-shadow:var(--shadow);border:1px solid var(--border);transition:var(--tr)}
+.law-card:hover{box-shadow:var(--shadow-md)}
+.law-card .article{font-size:.8rem;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.law-card h3{font-size:1.05rem;margin-bottom:10px}
+.law-card p{color:var(--text-muted);font-size:.88rem;line-height:1.7}
+.law-card .penalty{margin-top:12px;padding:10px 14px;background:var(--danger-light);border-radius:var(--r-sm);font-size:.82rem;color:var(--danger);font-weight:600;display:flex;align-items:center;gap:6px}
+.law-note{background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(6,182,212,.08));border:1px solid rgba(99,102,241,.15);border-radius:var(--r);padding:28px;margin-top:30px;text-align:center}
+.law-note .icon{font-size:2rem;margin-bottom:10px;display:block}
+.law-note p{font-size:.95rem;color:var(--text-dark);line-height:1.7;max-width:700px;margin:0 auto}
+.law-note strong{color:var(--primary)}
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px}
+.tip{background:var(--card);border-radius:var(--r);padding:28px 24px;box-shadow:var(--shadow);border:1px solid var(--border);transition:var(--tr);text-align:center}
+.tip:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.tip .tip-icon{font-size:2.4rem;margin-bottom:14px;display:block}
+.tip h4{font-size:1rem;margin-bottom:8px}
+.tip p{color:var(--text-muted);font-size:.85rem;line-height:1.6}
+.footer{background:var(--bg-dark);color:rgba(255,255,255,.6);padding:50px 0 30px;text-align:center}
+.footer-hash{font-size:2rem;font-weight:800;background:linear-gradient(135deg,var(--primary-light),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:16px;display:block}
+.footer p{font-size:.88rem;margin-bottom:6px}
+.footer .copy{margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,.08);font-size:.8rem;color:rgba(255,255,255,.35)}
+@media(max-width:768px){.nav-links{display:none}.burger{display:flex}.law-cards{grid-template-columns:1fr}.tips-grid{grid-template-columns:1fr}.page-header h1{font-size:1.6rem}}
+@media(min-width:769px) and (max-width:1024px){.law-cards{grid-template-columns:repeat(2,1fr)}.tips-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="page-transition" id="pageTransition"><div class="loader"></div></div>
+<nav class="nav"><div class="container nav-inner">
+<a href="index.html" class="nav-logo" onclick="return smoothNav(event,'index.html')">🛡️ <span>NetSentinel</span></a>
+<ul class="nav-links">
+<li><a href="index.html" onclick="return smoothNav(event,'index.html')">Главная</a></li>
+<li><a href="trainer.html" onclick="return smoothNav(event,'trainer.html')">Тренажёр</a></li>
+<li><a href="quiz.html" onclick="return smoothNav(event,'quiz.html')">Квиз</a></li>
+<li><a href="law.html" class="active" onclick="return smoothNav(event,'law.html')">Закон</a></li>
+<li><a href="phonecheck.html" onclick="return smoothNav(event,'phonecheck.html')">Проверка номера</a></li>
+</ul>
+<button class="burger" id="burgerBtn" aria-label="Меню"><span></span><span></span><span></span></button>
+</div></nav>
+<div class="mobile-menu" id="mobileMenu"><button class="mobile-close" id="mobileClose">✕</button>
+<a href="index.html" onclick="return smoothNav(event,'index.html')">🏠 Главная</a>
+<a href="trainer.html" onclick="return smoothNav(event,'trainer.html')">🎯 Тренажёр</a>
+<a href="quiz.html" onclick="return smoothNav(event,'quiz.html')">🧠 Квиз</a>
+<a href="law.html" onclick="return smoothNav(event,'law.html')">⚖️ Закон</a>
+<a href="phonecheck.html" onclick="return smoothNav(event,'phonecheck.html')">📞 Проверка номера</a>
+</div>
+
+<div class="page-header"><span class="badge">⚖️ Правовой блок</span><h1>Закон на страже кибербезопасности</h1><p>Законодательство Республики Беларусь предусматривает серьёзную ответственность за киберпреступления</p></div>
+
+<div class="container">
+<div class="section">
+<div class="law-cards">
+<div class="law-card reveal"><span class="article">Ст. 209 УК РБ</span><h3>Мошенничество (в т.ч. в интернете)</h3><p>Завладение имуществом путём обмана — включая фишинг и фейковые розыгрыши.</p><div class="penalty">⚠️ До 10 лет лишения свободы</div></div>
+<div class="law-card reveal"><span class="article">Ст. 212 УК РБ</span><h3>Хищение путём использования компьютерной техники</h3><p>Кража денег через взломанные аккаунты, поддельные платёжные системы и вредоносное ПО.</p><div class="penalty">⚠️ До 12 лет лишения свободы</div></div>
+<div class="law-card reveal"><span class="article">Ст. 349 УК РБ</span><h3>Несанкционированный доступ к компьютерной информации</h3><p>Взлом аккаунтов, подбор паролей, доступ к чужим устройствам.</p><div class="penalty">⚠️ До 7 лет лишения свободы</div></div>
+<div class="law-card reveal"><span class="article">Ст. 350 УК РБ</span><h3>Модификация компьютерной информации</h3><p>Изменение, удаление или подделка данных без права на это.</p><div class="penalty">⚠️ До 7 лет лишения свободы</div></div>
+<div class="law-card reveal"><span class="article">Ст. 351 УК РБ</span><h3>Компьютерный саботаж</h3><p>DDoS-атаки, распространение вирусов, нарушение работы систем.</p><div class="penalty">⚠️ До 10 лет лишения свободы</div></div>
+<div class="law-card reveal"><span class="article">Ст. 352 УК РБ</span><h3>Неправомерное завладение компьютерной информацией</h3><p>Копирование файлов, перехват переписки, скачивание данных без разрешения.</p><div class="penalty">⚠️ До 2 лет (до 6 при тяжких последствиях)</div></div>
+</div>
+<div class="law-note reveal"><span class="icon">👦</span><p>Уголовная ответственность по ст. 349–352 наступает <strong>с 16 лет</strong>, а по ст. 209 и 212 — <strong>с 14 лет</strong>. Даже несовершеннолетние могут быть привлечены к ответственности за киберпреступления!</p></div>
+</div>
+
+<div class="section">
+<div class="section-header"><span class="badge">💡 Практика</span><h2>10 правил кибербезопасности</h2><p>Простые действия, которые защитят тебя от большинства угроз</p></div>
+<div class="tips-grid">
+<div class="tip reveal"><span class="tip-icon">🔑</span><h4>Сложные пароли</h4><p>12+ символов: буквы, цифры, спецсимволы. Для каждого сервиса — свой.</p></div>
+<div class="tip reveal"><span class="tip-icon">📱</span><h4>Двухфакторная аутентификация</h4><p>Включи 2FA везде. Даже если пароль украдут — аккаунт защищён.</p></div>
+<div class="tip reveal"><span class="tip-icon">🔗</span><h4>Проверяй ссылки</h4><p>Проверяй домен: belarusbank.by ≠ beIarusbank.tk</p></div>
+<div class="tip reveal"><span class="tip-icon">📞</span><h4>Перезванивай сам</h4><p>Звонят из «банка» — положи трубку и набери номер с карты.</p></div>
+<div class="tip reveal"><span class="tip-icon">🤫</span><h4>Не делись личным</h4><p>Пароли, коды из СМС, данные карт — никому!</p></div>
+<div class="tip reveal"><span class="tip-icon">🔄</span><h4>Обновляй ПО</h4><p>Обновления закрывают уязвимости.</p></div>
+<div class="tip reveal"><span class="tip-icon">🗝️</span><h4>Кодовое слово</h4><p>Секретное слово для подтверждения при звонках.</p></div>
+<div class="tip reveal"><span class="tip-icon">📶</span><h4>Осторожно с Wi-Fi</h4><p>Не вводи пароли через публичный Wi-Fi.</p></div>
+<div class="tip reveal"><span class="tip-icon">📷</span><h4>Проверяй QR-коды</h4><p>После сканирования проверяй URL.</p></div>
+<div class="tip reveal"><span class="tip-icon">🚨</span><h4>Сообщай о мошенниках</h4><p>Звони 102 или обратись на сайт МВД.</p></div>
+</div>
+</div>
+</div>
+
+<footer class="footer"><div class="container"><span class="footer-hash">#КиберПраво</span><p>NetSentinel — интерактивный тренажёр</p><div class="copy">© 2025 Все права защищены</div></div></footer>
+
+<script>
+function smoothNav(e,url){e.preventDefault();document.getElementById('mobileMenu').classList.remove('open');document.getElementById('pageTransition').classList.add('active');setTimeout(()=>{window.location.href=url},400);return false}
+document.getElementById('burgerBtn').addEventListener('click',()=>document.getElementById('mobileMenu').classList.add('open'));
+document.getElementById('mobileClose').addEventListener('click',()=>document.getElementById('mobileMenu').classList.remove('open'));
+window.addEventListener('load',()=>document.getElementById('pageTransition').classList.remove('active'));
+const ro=new IntersectionObserver(e=>{e.forEach(en=>{if(en.isIntersecting){en.target.classList.add('visible');ro.unobserve(en.target)}})},{threshold:.15});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+</script>
+</body>
+</html>

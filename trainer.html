@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тренажёр «Входящие» — NetSentinel | #КиберПраво</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+--primary:#6366f1;--primary-dark:#4f46e5;--primary-light:#a5b4fc;
+--primary-glow:rgba(99,102,241,.35);--secondary:#06b6d4;
+--accent:#f59e0b;--danger:#ef4444;--danger-light:#fee2e2;
+--success:#22c55e;--success-light:#dcfce7;
+--bg-dark:#0f172a;
+--text-light:#f1f5f9;--text-dark:#1e293b;--text-muted:#64748b;
+--card:#fff;--section-alt:#f8fafc;--border:#e2e8f0;
+--r:16px;--r-sm:10px;--r-lg:24px;
+--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+--shadow-xl:0 20px 25px -5px rgba(0,0,0,.12),0 8px 10px -6px rgba(0,0,0,.08);
+--tr:all .3s cubic-bezier(.4,0,.2,1);
+--font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--font);color:var(--text-dark);line-height:1.65;background:var(--section-alt);overflow-x:hidden}
+a{color:var(--primary);text-decoration:none}
+h1,h2,h3{line-height:1.25;font-weight:700}
+.container{max-width:1140px;margin:0 auto;padding:0 20px}
+.page-transition{position:fixed;inset:0;background:var(--bg-dark);z-index:9999;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s ease}
+.page-transition.active{opacity:1;pointer-events:all}
+.page-transition .loader{width:40px;height:40px;border:3px solid rgba(255,255,255,.15);border-top-color:var(--secondary);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.nav{position:fixed;top:0;left:0;width:100%;z-index:1000;padding:14px 0;background:rgba(15,23,42,.92);backdrop-filter:blur(16px);box-shadow:0 2px 20px rgba(0,0,0,.2)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-size:1.3rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px}
+.nav-logo span{background:linear-gradient(135deg,var(--primary-light),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;gap:6px;list-style:none}
+.nav-links a{color:rgba(255,255,255,.8);font-size:.85rem;font-weight:500;transition:var(--tr);padding:8px 16px;border-radius:var(--r-sm)}
+.nav-links a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.nav-links a.active{color:#fff;background:rgba(99,102,241,.3)}
+.burger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+.burger span{width:24px;height:2px;background:#fff;border-radius:2px}
+.mobile-menu{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,.97);z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:30px;backdrop-filter:blur(20px)}
+.mobile-menu.open{display:flex}
+.mobile-menu a{color:#fff;font-size:1.3rem;font-weight:600}
+.mobile-close{position:absolute;top:20px;right:24px;background:none;border:none;color:#fff;font-size:2rem;cursor:pointer}
+.page-header{padding:100px 0 40px;text-align:center}
+.page-header h1{font-size:clamp(1.8rem,4vw,2.4rem);margin-bottom:10px}
+.page-header p{color:var(--text-muted);font-size:1.05rem;max-width:550px;margin:0 auto}
+.page-header .badge{display:inline-flex;align-items:center;gap:6px;background:var(--primary);color:#fff;padding:5px 14px;border-radius:50px;font-size:.78rem;font-weight:600;margin-bottom:14px;letter-spacing:.5px;text-transform:uppercase}
+.sim-wrapper{max-width:520px;margin:0 auto;padding:0 20px 60px}
+.sim-phone{background:var(--bg-dark);border-radius:var(--r-lg);padding:12px;box-shadow:var(--shadow-xl),0 0 60px rgba(99,102,241,.12)}
+.sim-screen{background:#1e293b;border-radius:var(--r);overflow:hidden;min-height:420px;display:flex;flex-direction:column}
+.sim-header{background:linear-gradient(135deg,var(--primary-dark),var(--primary));padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
+.sim-header .title{color:#fff;font-weight:700;font-size:1rem}
+.sim-header .counter{color:var(--primary-light);font-size:.85rem}
+.sim-progress{height:3px;background:rgba(255,255,255,.15)}
+.sim-progress-bar{height:100%;background:var(--secondary);transition:width .4s ease;width:0%}
+.sim-body{flex:1;padding:20px;display:flex;flex-direction:column}
+.sim-message{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:var(--r-sm);padding:20px;margin-bottom:16px;animation:msgIn .4s ease}
+@keyframes msgIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.sim-message .sender{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.sim-message .sender .avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;background:rgba(255,255,255,.1)}
+.sim-message .sender .name{font-weight:600;color:#fff;font-size:.95rem}
+.sim-message .msg-text{color:rgba(255,255,255,.8);font-size:.9rem;line-height:1.6}
+.sim-message .msg-link{color:var(--secondary);word-break:break-all;font-size:.85rem;background:rgba(6,182,212,.1);padding:6px 10px;border-radius:6px;display:inline-block;margin-top:8px}
+.sim-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:auto}
+.sim-btn{padding:14px;border-radius:var(--r-sm);font-size:.95rem;font-weight:700;cursor:pointer;border:2px solid;transition:var(--tr);font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:6px}
+.sim-btn-safe{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);color:var(--success)}
+.sim-btn-safe:hover{background:rgba(34,197,94,.2);border-color:var(--success)}
+.sim-btn-danger{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.3);color:var(--danger)}
+.sim-btn-danger:hover{background:rgba(239,68,68,.2);border-color:var(--danger)}
+.sim-feedback{padding:20px;animation:msgIn .3s ease}
+.sim-feedback .fb-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:1.05rem;font-weight:700}
+.sim-feedback.correct .fb-header{color:var(--success)}
+.sim-feedback.wrong .fb-header{color:var(--danger)}
+.sim-feedback .fb-text{color:rgba(255,255,255,.7);font-size:.88rem;line-height:1.7}
+.sim-feedback .fb-type{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:50px;font-size:.75rem;font-weight:600;margin-top:10px}
+.sim-feedback.correct .fb-type{background:rgba(34,197,94,.15);color:var(--success)}
+.sim-feedback.wrong .fb-type{background:rgba(239,68,68,.15);color:var(--danger)}
+.sim-next{width:100%;padding:12px;margin-top:12px;border:none;background:var(--primary);color:#fff;border-radius:var(--r-sm);font-size:.95rem;font-weight:600;cursor:pointer;transition:var(--tr);font-family:var(--font)}
+.sim-next:hover{background:var(--primary-dark)}
+.sim-result{text-align:center;padding:30px 20px;color:#fff}
+.sim-result .big-icon{font-size:4rem;margin-bottom:16px;display:block}
+.sim-result h3{font-size:1.4rem;margin-bottom:8px}
+.sim-result .score{font-size:2.5rem;font-weight:800;background:linear-gradient(135deg,var(--primary-light),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sim-result p{color:rgba(255,255,255,.6);margin-top:10px;font-size:.9rem}
+.footer{background:var(--bg-dark);color:rgba(255,255,255,.6);padding:50px 0 30px;text-align:center}
+.footer-hash{font-size:2rem;font-weight:800;background:linear-gradient(135deg,var(--primary-light),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:16px;display:block}
+.footer p{font-size:.88rem;margin-bottom:6px}
+.footer .copy{margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,.08);font-size:.8rem;color:rgba(255,255,255,.35)}
+@media(max-width:768px){
+.nav-links{display:none}
+.burger{display:flex}
+.sim-body{padding:14px}
+.sim-message{padding:16px}
+.page-header h1{font-size:1.6rem}
+}
+</style>
+</head>
+<body>
+
+<div class="page-transition" id="pageTransition"><div class="loader"></div></div>
+
+<nav class="nav"><div class="container nav-inner">
+<a href="index.html" class="nav-logo" onclick="return smoothNav(event,'index.html')">🛡️ <span>NetSentinel</span></a>
+<ul class="nav-links">
+<li><a href="index.html" onclick="return smoothNav(event,'index.html')">Главная</a></li>
+<li><a href="trainer.html" class="active" onclick="return smoothNav(event,'trainer.html')">Тренажёр</a></li>
+<li><a href="quiz.html" onclick="return smoothNav(event,'quiz.html')">Квиз</a></li>
+<li><a href="law.html" onclick="return smoothNav(event,'law.html')">Закон</a></li>
+<li><a href="phonecheck.html" onclick="return smoothNav(event,'phonecheck.html')">Проверка номера</a></li>
+</ul>
+<button class="burger" id="burgerBtn" aria-label="Меню"><span></span><span></span><span></span></button>
+</div></nav>
+
+<div class="mobile-menu" id="mobileMenu">
+<button class="mobile-close" id="mobileClose">✕</button>
+<a href="index.html" onclick="return smoothNav(event,'index.html')">🏠 Главная</a>
+<a href="trainer.html" onclick="return smoothNav(event,'trainer.html')">🎯 Тренажёр</a>
+<a href="quiz.html" onclick="return smoothNav(event,'quiz.html')">🧠 Квиз</a>
+<a href="law.html" onclick="return smoothNav(event,'law.html')">⚖️ Закон</a>
+<a href="phonecheck.html" onclick="return smoothNav(event,'phonecheck.html')">📞 Проверка номера</a>
+</div>
+
+<div class="page-header">
+<span class="badge">🎯 Тренажёр</span>
+<h1>Проверь свой «Входящие»</h1>
+<p>Перед тобой 10 сообщений. Определи — безопасное оно или мошенническое.</p>
+</div>
+
+<div class="sim-wrapper">
+<div class="sim-phone">
+<div class="sim-screen">
+<div class="sim-header">
+<span class="title">📬 Входящие</span>
+<span class="counter" id="simCounter">1 / 10</span>
+</div>
+<div class="sim-progress"><div class="sim-progress-bar" id="simProgress"></div></div>
+<div class="sim-body" id="simBody"></div>
+</div>
+</div>
+</div>
+
+<footer class="footer"><div class="container">
+<span class="footer-hash">#��иберПраво</span>
+<p>NetSentinel — интерактивный тренажёр по распознаванию кибермошенничества</p>
+<div class="copy">© 2025 Все права защищены</div>
+</div></footer>
+
+<script>
+function smoothNav(e,url){e.preventDefault();document.getElementById('mobileMenu').classList.remove('open');document.getElementById('pageTransition').classList.add('active');setTimeout(()=>{window.location.href=url},400);return false}
+document.getElementById('burgerBtn').addEventListener('click',()=>document.getElementById('mobileMenu').classList.add('open'));
+document.getElementById('mobileClose').addEventListener('click',()=>document.getElementById('mobileMenu').classList.remove('open'));
+window.addEventListener('load',()=>document.getElementById('pageTransition').classList.remove('active'));
+
+const messages=[
+{sender:"Instagram",avatar:"📸",text:"⚠️ Ваш аккаунт будет удалён через 24 часа из-за нарушения правил. Срочно подтвердите личность:",link:"instagram-secure-verify.tk/confirm",isDangerous:true,type:"Фишинг",explanation:"Это фишинг! Instagram не рассылает такие угрозы. Домен .tk — не настоящий."},
+{sender:"Мама",avatar:"👩",text:"Привет! Купи хлеб и молоко по дороге домой. Деньги на столе 🙂",link:null,isDangerous:false,type:"Безопасно",explanation:"Обычное сообщение от мамы. Нет ссылок, нет просьб о деньгах на карту."},
+{sender:"ВЫИГРЫШ",avatar:"🎁",text:"🎉 Поздравляем! Вы выиграли iPhone 16 Pro Max! Оплатите доставку 4.99 BYN:",link:"prize-center-win.com/pay",isDangerous:true,type:"Мошенничество",explanation:"Нельзя выиграть приз в конкурсе, в котором не участвовал. «Оплата доставки» — способ выманить данные карты."},
+{sender:"Школьный портал",avatar:"🏫",text:"Расписание на понедельник изменено. Актуальная информация — на официальном сайте школы.",link:null,isDangerous:false,type:"Безопасно",explanation:"Обычное информационное сообщение от школы."},
+{sender:"Друг (голосовое)",avatar:"🎙️",text:"🔊 Голосовое (0:12): «Слушай, я в беде, нужны деньги, скинь 100 рублей на карту, это срочно!»",link:null,isDangerous:true,type:"Дипфейк голоса",explanation:"Нейросети могут клонировать голос. ПЕРЕЗВОНИ другу сам на его номер!"},
+{sender:"A1",avatar:"📱",text:"Баланс: 23.45 BYN. Тариф «СуперМикс». Подробности: my.a1.by",link:null,isDangerous:false,type:"Безопасно",explanation:"Стандартное сообщение от A1. Указан официальный домен my.a1.by."},
+{sender:"Служба безопасности банка",avatar:"🏦",text:"⚠️ На ваше имя оформлен кредит на 5000 BYN. Для отмены сообщите код из SMS. Звоните: +375 (25) 999-88-77",link:null,isDangerous:true,type:"Социальная инженерия",explanation:"Банк НИКОГДА не просит код из SMS. Положи трубку и позвони в банк по номеру с карты."},
+{sender:"Одноклассник Кирилл",avatar:"😂",text:"Ахаха, ты видел это видео?? Это точно ты! 😂😂",link:"video-viral-watch.ru/v/83hFk2",isDangerous:true,type:"Фишинг",explanation:"Аккаунт друга мог быть взломан. «Смотри, это ты на видео» — классическая приманка."},
+{sender:"Бесплатный Wi-Fi",avatar:"📶",text:"📶 Подключитесь к Wi-Fi «McDonalds_Free». Для доступа введите логин от соцсети:",link:"free-wifi-connect.net/login",isDangerous:true,type:"Фейковый Wi-Fi (Evil Twin)",explanation:"Настоящий Wi-Fi никогда не просит пароль от соцсетей. Это ловушка для перехвата данных!"},
+{sender:"QR-оплата",avatar:"📱",text:"📱 Отсканируйте QR на листовке для скидки 50%! Введите данные карты:",link:"super-skidka-qr.xyz/pay",isDangerous:true,type:"QR-фишинг (Quishing)",explanation:"Домен .xyz подозрительный. Магазины не требуют данные карты для скидки через QR. Всегда проверяй URL!"}
+];
+
+let simIndex=0,simScore=0;
+const simBody=document.getElementById('simBody'),simCounter=document.getElementById('simCounter'),simProgress=document.getElementById('simProgress');
+
+function renderSimMessage(){
+if(simIndex>=messages.length){renderSimResult();return}
+const m=messages[simIndex];
+simCounter.textContent=`${simIndex+1} / ${messages.length}`;
+simProgress.style.width=`${(simIndex/messages.length)*100}%`;
+let linkHTML=m.link?`<span class="msg-link">🔗 ${m.link}</span>`:'';
+simBody.innerHTML=`<div class="sim-message"><div class="sender"><div class="avatar">${m.avatar}</div><div class="name">${m.sender}</div></div><div class="msg-text">${m.text}</div>${linkHTML}</div><div class="sim-actions"><button class="sim-btn sim-btn-safe" onclick="checkSim(false)">✓ Безопасно</button><button class="sim-btn sim-btn-danger" onclick="checkSim(true)">✗ Мошенничество</button></div>`;
+}
+
+function checkSim(d){
+const m=messages[simIndex],c=d===m.isDangerous;
+if(c)simScore++;
+simBody.innerHTML=`<div class="sim-feedback ${c?'correct':'wrong'}"><div class="fb-header">${c?'✅ Верно!':'❌ Неверно!'}</div><div class="fb-text">${m.explanation}</div><span class="fb-type">${m.isDangerous?'🚨 '+m.type:'✅ '+m.type}</span></div><button class="sim-next" onclick="simIndex++;renderSimMessage()">${simIndex<messages.length-1?'Следующее →':'Результаты →'}</button>`;
+}
+
+function renderSimResult(){
+simProgress.style.width='100%';simCounter.textContent='Готово!';
+const p=Math.round((simScore/messages.length)*100);
+let e,c;
+if(p>=90){e='🏆';c='Великолепно! Тебя не проведёшь!'}
+else if(p>=70){e='🛡️';c='Хороший результат!'}
+else if(p>=50){e='⚠️';c='Неплохо, но мошенники могли бы тебя обмануть.'}
+else{e='🚨';c='Нужно серьёзно подтянуть знания!'}
+simBody.innerHTML=`<div class="sim-result"><span class="big-icon">${e}</span><h3>Результат тренажёра</h3><div class="score">${simScore} / ${messages.length}</div><p>${c}</p><button class="sim-next" onclick="simIndex=0;simScore=0;renderSimMessage()" style="margin-top:20px">🔄 Пройти заново</button></div>`;
+}
+renderSimMessage();
+</script>
+</body>
+</html>
